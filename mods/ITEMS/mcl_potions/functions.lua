@@ -195,7 +195,7 @@ minetest.register_globalstep(function(dtime)
 			if player:get_pos() then mcl_potions._add_spawner(player, "#2E5299") end
 
 			if player:get_breath() then
-				if player:get_breath() < 10 then player:set_breath(10) end
+				player:set_breath(10)
 			end
 
 			if EF.water_breathing[player].timer >= EF.water_breathing[player].dur then
