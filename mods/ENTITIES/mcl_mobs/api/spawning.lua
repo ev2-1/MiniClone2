@@ -222,7 +222,7 @@ function mobs:spawn_specific(name, dimension, type_of_spawning, biomes, min_ligh
 	--print(dump(biomes))
 
 	-- Do mobs spawn at all?
-	if not mobs_spawn then
+	if true or not mobs_spawn then --MOBSTUDY disable natural spawning of old mobs(redo)
 		return
 	end
 
