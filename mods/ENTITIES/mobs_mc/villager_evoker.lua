@@ -85,3 +85,17 @@ mobs:register_mob("mobs_mc:evoker", {
 
 -- spawn eggs
 mobs:register_egg("mobs_mc:evoker", S("Evoker"), "mobs_mc_spawn_icon_evoker.png", 0)
+mobs:spawn_specific(
+"mobs_mc:evoker",
+"overworld",
+"ground",
+{
+"RoofedForest",
+},
+0,
+7,
+30,
+65000,
+8,
+mobs_mc.spawn_height.overworld_min,
+mobs_mc.spawn_height.overworld_max)
