@@ -71,6 +71,7 @@ for _, row in ipairs(wool.dyes) do
 			_doc_items_entry_name = name_carpet,
 			_doc_items_longdesc = longdesc_carpet,
 
+			drawtype = "nodebox",
 			is_ground_content = false,
 			tiles = {texture..".png"},
 			wield_image = texture..".png",
@@ -78,14 +79,13 @@ for _, row in ipairs(wool.dyes) do
 			groups = {handy=1, carpet=1,attached_node=1,flammable=1,fire_encouragement=60, fire_flammability=20, dig_by_water=1,deco_block=1,[color_group]=1},
 			sounds = mcl_sounds.node_sound_wool_defaults(),
 			paramtype = "light",
+			paramtype2 = "wallmounted",
 			sunlight_propagates = true,
 			stack_max = 64,
-			drawtype = "nodebox",
 			node_box = {
-				type = "fixed",
-				fixed = {
-					{-8/16, -8/16, -8/16, 8/16, -7/16, 8/16},
-				},
+				type = "wallmounted",
+				wall_top = {-8/16, -8/16, -8/16, 8/16, -7/16, 8/16},
+				wall_side = {-8/16, -8/16, -8/16, 8/16, -7/16, 8/16},
 			},
 			_mcl_hardness = 0.1,
 			_mcl_blast_resistance = 0.1,
