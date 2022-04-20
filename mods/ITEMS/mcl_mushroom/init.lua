@@ -173,7 +173,7 @@ minetest.register_node("mcl_mushroom:warped_hyphae", {
 	_mcl_blast_resistance = 2,
 	stack_max = 64,
 	_mcl_hardness = 2,
-	_mcl_stripped_variant = stripped_variant,
+	_mcl_stripped_variant = "mcl_mushroom:stripped_warped_hyphae",
 })
 
 minetest.register_node("mcl_mushroom:warped_nylium", {
@@ -280,21 +280,12 @@ minetest.register_craft({
 --Wood
 
 minetest.register_node("mcl_mushroom:warped_hyphae_wood", {
-<<<<<<< HEAD
   description = S("Warped Hyphae Wood"),
   tiles = {"warped_hyphae_wood.png"},
   groups = {handy=5,axey=1, flammable=3,wood=1,building_block=1, material_wood=1, fire_encouragement=5, fire_flammability=20},
   paramtype2 = "facedir",
   stack_max = 64,
   _mcl_hardness = 2,
-=======
-	description = S("Warped Hyphae Wood"),
-	tiles = {"warped_hyphae_wood.png"},
-	groups = {handy=5,axey=1, wood=1,building_block=1, material_wood=1},
-	--paramtype2 = "facedir",
-	stack_max = 64,
-	_mcl_hardness = 2,
->>>>>>> 4850b914a (Non flammable/modify by similiraty with trees)
 })
 
 mcl_stairs.register_stair_and_slab_simple("warped_hyphae_wood", "mcl_mushroom:warped_hyphae_wood", S("Warped Stair"), S("Warped Slab"), S("Double Warped Slab"))
@@ -461,8 +452,12 @@ minetest.register_node("mcl_mushroom:crimson_hyphae", {
 	_mcl_blast_resistance = 2,
 	stack_max = 64,
 	_mcl_hardness = 2,
+<<<<<<< HEAD
 	_mcl_stripped_variant = stripped_variant,
 >>>>>>> 4850b914a (Non flammable/modify by similiraty with trees)
+=======
+	_mcl_stripped_variant = "mcl_mushroom:stripped_crimson_hyphae",
+>>>>>>> 3dcb969d7 (fix)
 })
 
 --Stem bark, stripped stem and bark
