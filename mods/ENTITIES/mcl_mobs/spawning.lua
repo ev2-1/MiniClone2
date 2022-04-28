@@ -405,6 +405,8 @@ if mobs_spawn then
 		local is_water = get_item_group(gotten_node, "water") ~= 0
 		local is_lava  = get_item_group(gotten_node, "lava") ~= 0
 		local is_ground = not (is_water or is_lava)
+		local is_dirt = minetest.get_item_group(gotten_node,"dirt") ~= 0
+
 		if not is_ground then
 			spawning_position.y = spawning_position.y - 1
 		end
@@ -431,6 +433,7 @@ if mobs_spawn then
 				step_chance = step_chance + mob_chance
 			end
 			local mob_def = mob_library_worker_table[mob_index]
+			local mob_type=minetest.registered_entities[mob_def.name].type
 			if mob_def
 				and spawning_position.y >= mob_def.min_height
 				and spawning_position.y <= mob_def.max_height
@@ -440,6 +443,7 @@ if mobs_spawn then
 				and gotten_light <= mob_def.max_light
 				and (is_ground or mob_def.type_of_spawning ~= "ground")
 				and (mob_def.check_position and mob_def.check_position(spawning_position) or true)
+				and mob_def.type_of_spawning == "ground" and not( ( mob_type == "animal" or mob_type == "npc" ) and not is_dirt ) -- spawn ground-animals and villagers only on dirt nodes to prevent them spawning on all kinds of blocks we need to do this to villagers too otherwise you can make a villager farm by making a cobble platform in the sky
 				then
 					--everything is correct, spawn mob
 					local object = minetest.add_entity(spawning_position, mob_def.name)
