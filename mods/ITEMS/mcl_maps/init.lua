@@ -247,15 +247,6 @@ function minetest.add_item(pos, stack)
 	return old_add_item(pos, stack)
 end
 
-tt.register_priority_snippet(function(itemstring, _, itemstack)
-	if itemstack and get_item_group(itemstring, "filled_map") > 0 then
-		local id = itemstack:get_meta():get_string("mcl_maps:id")
-		if id ~= "" then
-			return "#" .. id, mcl_colors.GRAY
-		end
-	end
-end)
-
 minetest.register_craft({
 	output = "mcl_maps:empty_map",
 	recipe = {
