@@ -36,8 +36,6 @@ function mcl_doors:register_trapdoor(name, def)
 
 	-- Open trapdoor
 
-	local groups_open = table.copy(groups)
-
 	local tiles_open = {
 		tile_side,
 		tile_side .. "^[transformR180",
