@@ -122,6 +122,15 @@ minetest.register_node("mcl_core:dirt_with_grass", {
 minetest.register_node("mcl_core:grass_path", {
 	tiles = {"mcl_core_grass_path_top.png", "default_dirt.png", "mcl_core_grass_path_side.png"},
 	is_ground_content = true,
+	drawtype = "nodebox",
+	paramtype = "light",
+	node_box = {
+		type = "fixed",
+		fixed = {
+			-- 15/16 of the normal height
+			{-0.5, -0.5, -0.5, 0.5, 0.4375, 0.5},
+		}
+	},
 })
 
 -- TODO: Add particles

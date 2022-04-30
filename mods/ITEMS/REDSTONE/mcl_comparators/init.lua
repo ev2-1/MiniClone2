@@ -43,14 +43,9 @@ local collision_box = {
 	fixed = { -8/16, -8/16, -8/16, 8/16, -6/16, 8/16 },
 }
 
-local state_strs = {
-	[ mesecon.state.on  ] = "on",
-	[ mesecon.state.off ] = "off",
-}
-
 for _, mode in pairs{"comp", "sub"} do
-	for _, state in pairs{mesecon.state.on, mesecon.state.off} do
-		local state_str = state_strs[state]
+	for _, state in pairs{"on", "off"} do
+		local state_str = state
 		local nodename =
 			"mcl_comparators:comparator_"..state_str.."_"..mode
 
@@ -79,11 +74,11 @@ for _, mode in pairs{"comp", "sub"} do
 			drop = "mcl_comparators:comparator_off_comp",
 		}
 
-		if mode == "comp" and state == mesecon.state.off then
+		if mode == "comp" and state == "off" then
 			-- This is the prototype
 			nodedef._doc_items_create_entry = true
 		else
-			if mode == "sub" or state == mesecon.state.on then
+			if mode == "sub" or state == "on" then
 				nodedef.inventory_image = nil
 			end
 		end

@@ -53,55 +53,6 @@ local dropperdef = {
 			return stack:get_count()
 		end
 	end,
-	_mcl_blast_resistance = 3.5,
-	_mcl_hardness = 3.5,
-	mesecons = {effector = {
-		-- Drop random item when triggered
-		action_on = function(pos, node)
-			local meta = minetest.get_meta(pos)
-			local inv = meta:get_inventory()
-			local droppos
-			if node.name == "mcl_droppers:dropper" then
-				droppos  = vector.subtract(pos, minetest.facedir_to_dir(node.param2))
-			elseif node.name == "mcl_droppers:dropper_up" then
-				droppos  = {x=pos.x, y=pos.y+1, z=pos.z}
-			elseif node.name == "mcl_droppers:dropper_down" then
-				droppos  = {x=pos.x, y=pos.y-1, z=pos.z}
-			end
-			local dropnode = minetest.get_node(droppos)
-			-- Do not drop into solid nodes, unless they are containers
-			local dropnodedef = minetest.registered_nodes[dropnode.name]
-			if dropnodedef.walkable and not dropnodedef.groups.container then
-				return
-			end
-			local stacks = {}
-			for i=1,inv:get_size("main") do
-				local stack = inv:get_stack("main", i)
-				if not stack:is_empty() then
-					table.insert(stacks, {stack = stack, stackpos = i})
-				end
-			end
-			if #stacks >= 1 then
-				local r = math.random(1, #stacks)
-				local stack = stacks[r].stack
-				local dropitem = ItemStack(stack)
-				dropitem:set_count(1)
-				local stack_id = stacks[r].stackpos
-
-				-- If it's a container, attempt to put it into the container
-				local dropped = mcl_util.move_item_container(pos, droppos, nil, stack_id)
-				-- No container?
-				if not dropped and not dropnodedef.groups.container then
-					-- Drop item normally
-					minetest.add_item(droppos, dropitem)
-					stack:take_item()
-					inv:set_stack("main", stack_id, stack)
-				end
-			end
-		end,
-		rules = mesecon.rules.alldirs,
-	}},
-	on_rotate = on_rotate,
 }
 
 -- Horizontal dropper
