@@ -64,91 +64,7 @@ mcl_enchanting = {
 
 dofile(modpath .. "/engine.lua")
 dofile(modpath .. "/groupcaps.lua")
-dofile(modpath .. "/enchantments.lua")
-
-minetest.register_chatcommand("enchant", {
-	description = S("Enchant an item"),
-	params = S("<player> <enchantment> [<level>]"),
-	privs = {give = true},
-	func = function(_, param)
-		local sparam = param:split(" ")
-		local target_name = sparam[1]
-		local enchantment = sparam[2]
-		local level_str = sparam[3]
-		local level = tonumber(level_str or "1")
-		if not target_name or not enchantment then
-			return false, S("Usage: /enchant <player> <enchantment> [<level>]")
-		end
-		local target = minetest.get_player_by_name(target_name)
-		if not target then
-			return false, S("Player '@1' cannot be found.", target_name)
-		end
-		local itemstack = target:get_wielded_item()
-		local can_enchant, errorstring, extra_info = mcl_enchanting.can_enchant(itemstack, enchantment, level)
-		if not can_enchant then
-			if errorstring == "enchantment invalid" then
-				return false, S("There is no such enchantment '@1'.", enchantment)
-			elseif errorstring == "item missing" then
-				return false, S("The target doesn't hold an item.")
-			elseif errorstring == "item not supported" then
-				return false, S("The selected enchantment can't be added to the target item.")
-			elseif errorstring == "level invalid" then
-				return false, S("'@1' is not a valid number", level_str)
-			elseif errorstring == "level too high" then
-				return false, S("The number you have entered (@1) is too big, it must be at most @2.", level_str, extra_info)
-			elseif errorstring == "level too small" then
-				return false, S("The number you have entered (@1) is too small, it must be at least @2.", level_str, extra_info)
-			elseif errorstring == "incompatible" then
-				return false, S("@1 can't be combined with @2.", mcl_enchanting.get_enchantment_description(enchantment, level), extra_info)
-			end
-		else
-			target:set_wielded_item(mcl_enchanting.enchant(itemstack, enchantment, level))
-			return true, S("Enchanting succeded.")
-		end
-	end
-})
-
-minetest.register_chatcommand("forceenchant", {
-	description = S("Forcefully enchant an item"),
-	params = S("<player> <enchantment> [<level>]"),
-	privs = {give = true},
-	func = function(_, param)
-		local sparam = param:split(" ")
-		local target_name = sparam[1]
-		local enchantment = sparam[2]
-		local level_str = sparam[3]
-		local level = tonumber(level_str or "1")
-		if not target_name or not enchantment then
-			return false, S("Usage: /forceenchant <player> <enchantment> [<level>]")
-		end
-		local target = minetest.get_player_by_name(target_name)
-		if not target then
-			return false, S("Player '@1' cannot be found.", target_name)
-		end
-		local itemstack = target:get_wielded_item()
-		local _, errorstring = mcl_enchanting.can_enchant(itemstack, enchantment, level)
-		if errorstring == "enchantment invalid" then
-			return false, S("There is no such enchantment '@1'.", enchantment)
-		elseif errorstring == "item missing" then
-			return false, S("The target doesn't hold an item.")
-		elseif errorstring == "item not supported" and not mcl_enchanting.is_enchantable(itemstack:get_name()) then
-			return false, S("The target item is not enchantable.")
-		elseif errorstring == "level invalid" then
-			return false, S("'@1' is not a valid number.", level_str)
-		else
-			target:set_wielded_item(mcl_enchanting.enchant(itemstack, enchantment, level))
-			return true, S("Enchanting succeded.")
-		end
-	end
-})
-
-minetest.register_craftitem("mcl_enchanting:book_enchanted", {
-	description = S("Enchanted Book"),
-	inventory_image = "mcl_enchanting_book_enchanted.png" .. mcl_enchanting.overlay,
-	groups = {enchanted = 1, not_in_creative_inventory = 1, enchantability = 1},
-	_mcl_enchanting_enchanted_tool = "mcl_enchanting:book_enchanted",
-	stack_max = 1,
-})
+--dofile(modpath .. "/enchantments.lua")
 
 minetest.register_alias("mcl_books:book_enchanted", "mcl_enchanting:book_enchanted")
 
@@ -217,23 +133,7 @@ minetest.register_entity("mcl_enchanting:book", {
 	end,
 })
 
-local rotate
-if minetest.get_modpath("screwdriver") then
-	rotate = screwdriver.rotate_simple
-end
-
 minetest.register_node("mcl_enchanting:table", {
-	description = S("Enchanting Table"),
-	_tt_help = S("Spend experience, and lapis to enchant various items."),
-	_doc_items_longdesc = S("Enchanting Tables will let you enchant armors, tools, weapons, and books with various abilities. But, at the cost of some experience, and lapis lazuli."),
-	_doc_items_usagehelp =
-			S("Rightclick the Enchanting Table to open the enchanting menu.").."\n"..
-			S("Place a tool, armor, weapon or book into the top left slot, and then place 1-3 Lapis Lazuli in the slot to the right.").."\n".."\n"..
-			S("After placing your items in the slots, the enchanting options will be shown. Hover over the options to read what is available to you.").."\n"..
-			S("These options are randomized, and dependent on experience level; but the enchantment strength can be increased.").."\n".."\n"..
-			S("To increase the enchantment strength, place bookshelves around the enchanting table. However, you will need to keep 1 air node between the table, & the bookshelves to empower the enchanting table.").."\n".."\n"..
-			S("After finally selecting your enchantment; left-click on the selection, and you will see both the lapis lazuli and your experience levels consumed. And, an enchanted item left in its place."),
-	_doc_items_hidden = false,
 	drawtype = "nodebox",
 	tiles = {"mcl_enchanting_table_top.png",  "mcl_enchanting_table_bottom.png", "mcl_enchanting_table_side.png", "mcl_enchanting_table_side.png", "mcl_enchanting_table_side.png", "mcl_enchanting_table_side.png"},
 	use_texture_alpha = minetest.features.use_texture_alpha_string_modes and "opaque" or false,
@@ -241,24 +141,8 @@ minetest.register_node("mcl_enchanting:table", {
 		type = "fixed",
 		fixed = {-0.5, -0.5, -0.5, 0.5, 0.25, 0.5},
 	},
-	sounds = mcl_sounds.node_sound_stone_defaults(),
 	groups = {pickaxey = 2, deco_block = 1},
 	on_rotate = rotate,
-	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-		local player_meta = clicker:get_meta()
-		--local table_meta = minetest.get_meta(pos)
-		--local num_bookshelves = table_meta:get_int("mcl_enchanting:num_bookshelves")
-		local table_name = minetest.get_meta(pos):get_string("name")
-		if table_name == "" then
-			table_name = S("Enchant")
-		end
-		local bookshelves = mcl_enchanting.get_bookshelves(pos)
-		player_meta:set_int("mcl_enchanting:num_bookshelves", math.min(15, #bookshelves))
-		player_meta:set_string("mcl_enchanting:table_name", table_name)
-		mcl_enchanting.show_enchanting_formspec(clicker)
-		-- Respawn book entity just in case it got lost
-		spawn_book_entity(pos, true)
-	end,
 	on_construct = function(pos)
 		spawn_book_entity(pos)
 	end,

@@ -19,9 +19,6 @@ local get_player_by_name = minetest.get_player_by_name
 
 local registered_nodes = minetest.registered_nodes
 
-local get_hunger = mcl_hunger.get_hunger
-local exhaust =  mcl_hunger.exhaust
-
 
 --Configuration variables, these are all explained in README.md
 mcl_sprint = {}
@@ -176,7 +173,6 @@ minetest.register_globalstep(function(dtime)
 				players[playerName].sprintDistance = players[playerName].sprintDistance + dist
 				if players[playerName].sprintDistance >= 1 then
 					local superficial = math.floor(players[playerName].sprintDistance)
-					exhaust(playerName, mcl_hunger.EXHAUST_SPRINT * superficial)
 					players[playerName].sprintDistance = players[playerName].sprintDistance - superficial
 				end
 
@@ -210,9 +206,7 @@ minetest.register_globalstep(function(dtime)
 			players[playerName].lastPos = playerPos
 			if players[playerName]["shouldSprint"] == true then --Stopped
 				local sprinting
-				-- Prevent sprinting if hungry or sleeping
-				if (mcl_hunger.active and get_hunger(player) <= 6)
-				or (player:get_meta():get_string("mcl_beds:sleeping") == "true") then
+				if (player:get_meta():get_string("mcl_beds:sleeping") == "true") then
 					sprinting = false
 					cancelClientSprinting(playerName)
 				else

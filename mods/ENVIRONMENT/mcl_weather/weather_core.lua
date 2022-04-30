@@ -27,8 +27,6 @@ mcl_weather.reg_weathers = {}
 mcl_weather.allow_abm = true
 
 mcl_weather.reg_weathers["none"] = {
-	min_duration = mcl_weather.min_duration,
-	max_duration = mcl_weather.max_duration,
 	light_factor = nil,
 	transitions = {
 		[50] = "rain",
@@ -39,13 +37,6 @@ mcl_weather.reg_weathers["none"] = {
 
 local storage = minetest.get_mod_storage()
 -- Save weather into mod storage, so it can be loaded after restarting the server
-local function save_weather()
-	if not mcl_weather.end_time then return end
-	storage:set_string("mcl_weather_state", mcl_weather.state)
-	storage:set_int("mcl_weather_end_time", mcl_weather.end_time)
-	minetest.log("verbose", "[mcl_weather] Weather data saved: state="..mcl_weather.state.." end_time="..mcl_weather.end_time)
-end
-minetest.register_on_shutdown(save_weather)
 
 local particlespawners={}
 function mcl_weather.add_spawner_player(pl,id,ps)
@@ -131,36 +122,7 @@ minetest.register_globalstep(function(dtime)
 	if mcl_weather.end_time == nil then
 		mcl_weather.end_time = mcl_weather.get_rand_end_time()
 	end
-	-- recalculate weather
-	if mcl_weather.end_time <= minetest.get_gametime() then
-		local changeWeather = minetest.settings:get_bool("mcl_doWeatherCycle")
-		if changeWeather == nil then
-			changeWeather = true
-		end
-		if changeWeather then
-			mcl_weather.set_random_weather(mcl_weather.state, mcl_weather.reg_weathers[mcl_weather.state])
-		else
-			mcl_weather.end_time = mcl_weather.get_rand_end_time()
-		end
-	end
 end)
-
--- Sets random weather (which could be 'none' (no weather)).
-function mcl_weather.set_random_weather(weather_name, weather_meta)
-	if weather_meta == nil then return end
-	local transitions = weather_meta.transitions
-	local random_roll = math.random(0,100)
-	local new_weather
-	for v, weather in pairs(transitions) do
-		if random_roll < v then
-			new_weather = weather
-			break
-		end
-	end
-	if new_weather then
-		mcl_weather.change_weather(new_weather)
-	end
-end
 
 -- Change weather to new_weather.
 -- * explicit_end_time is OPTIONAL. If specified, explicitly set the
@@ -193,7 +155,6 @@ function mcl_weather.change_weather(new_weather, explicit_end_time, changer_name
 			mcl_weather.end_time = mcl_weather.get_rand_end_time(weather_meta.min_duration, weather_meta.max_duration)
 		end
 		mcl_weather.skycolor.update_sky_color()
-		save_weather()
 		return true
 	end
 	return false
@@ -202,11 +163,6 @@ end
 function mcl_weather.get_weather()
 	return mcl_weather.state
 end
-
-minetest.register_privilege("weather_manager", {
-	description = S("Gives ability to control weather"),
-	give_to_singleplayer = false
-})
 
 -- Weather command definition. Set
 minetest.register_chatcommand("weather", {
@@ -247,31 +203,10 @@ minetest.register_chatcommand("weather", {
 	end
 })
 
-minetest.register_chatcommand("toggledownfall", {
-	params = "",
-	description = S("Toggles between clear weather and weather with downfall (randomly rain, thunderstorm or snow)"),
-	privs = {weather_manager = true},
-	func = function(name, param)
-		-- Currently rain/thunder/snow: Set weather to clear
-		if mcl_weather.state ~= "none" then
-			return mcl_weather.change_weather("none", nil, name)
-
-		-- Currently clear: Set weather randomly to rain/thunder/snow
-		else
-			local new = { "rain", "thunder", "snow" }
-			local r = math.random(1, #new)
-			return mcl_weather.change_weather(new[r], nil, name)
-		end
-	end
+minetest.register_privilege("weather_manager", {
+	description = S("Gives ability to control weather"),
+	give_to_singleplayer = false
 })
-
--- Configuration setting which allows user to disable ABM for weathers (if they use it).
--- Weather mods expected to be use this flag before registering ABM.
-local weather_allow_abm = minetest.settings:get_bool("weather_allow_abm")
-if weather_allow_abm == false then
-	mcl_weather.allow_abm = false
-end
-
 
 local function load_weather()
 	local weather = storage:get_string("mcl_weather_state")

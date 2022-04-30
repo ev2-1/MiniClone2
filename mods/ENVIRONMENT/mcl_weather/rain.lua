@@ -7,9 +7,6 @@ mcl_weather.rain = {
 	-- max rain particles created at time
 	particles_count = PARTICLES_COUNT_RAIN,
 
-	-- flag to turn on/off extinguish fire for rain
-	extinguish_fire = true,
-
 	-- flag useful when mixing weathers
 	raining = false,
 
@@ -209,82 +206,10 @@ function mcl_weather.rain.set_particles_mode(mode)
 	end
 end
 
-if mcl_weather.allow_abm then
-	-- ABM for extinguish fire
-	minetest.register_abm({
-		label = "Rain extinguishes fire",
-		nodenames = {"mcl_fire:fire"},
-		interval = 2.0,
-		chance = 2,
-		action = function(pos, node, active_object_count, active_object_count_wider)
-			-- Fire is extinguished if in rain or one of 4 neighbors is in rain
-			if mcl_weather.rain.raining and mcl_weather.rain.extinguish_fire then
-				local around = {
-					{ x = 0, y = 0, z = 0 },
-					{ x = -1, y = 0, z = 0 },
-					{ x = 1, y = 0, z = 0 },
-					{ x = 0, y = 0, z = -1 },
-					{ x = 0, y = 0, z = 1 },
-				}
-				for a=1, #around do
-					local apos = vector.add(pos, around[a])
-					if mcl_weather.is_outdoor(apos) then
-						minetest.remove_node(pos)
-						minetest.sound_play("fire_extinguish_flame", {pos = pos, max_hear_distance = 8, gain = 0.1}, true)
-						return
-					end
-				end
-			end
-		end,
-	})
-
-	-- Slowly fill up cauldrons
-	minetest.register_abm({
-		label = "Rain fills cauldrons with water",
-		nodenames = {"mcl_cauldrons:cauldron", "mcl_cauldrons:cauldron_1", "mcl_cauldrons:cauldron_2"},
-		interval = 56.0,
-		chance = 1,
-		action = function(pos, node, active_object_count, active_object_count_wider)
-			-- Rain is equivalent to a water bottle
-			if mcl_weather.rain.raining and mcl_weather.is_outdoor(pos) then
-				if node.name == "mcl_cauldrons:cauldron" then
-					minetest.set_node(pos, {name="mcl_cauldrons:cauldron_1"})
-				elseif node.name == "mcl_cauldrons:cauldron_1" then
-					minetest.set_node(pos, {name="mcl_cauldrons:cauldron_2"})
-				elseif node.name == "mcl_cauldrons:cauldron_2" then
-					minetest.set_node(pos, {name="mcl_cauldrons:cauldron_3"})
-				elseif node.name == "mcl_cauldrons:cauldron_1r" then
-					minetest.set_node(pos, {name="mcl_cauldrons:cauldron_2r"})
-				elseif node.name == "mcl_cauldrons:cauldron_2r" then
-					minetest.set_node(pos, {name="mcl_cauldrons:cauldron_3r"})
-				end
-			end
-		end
-	})
-
-	-- Wetten the soil
-	minetest.register_abm({
-		label = "Rain hydrates farmland",
-		nodenames = {"mcl_farming:soil"},
-		interval = 22.0,
-		chance = 3,
-		action = function(pos, node, active_object_count, active_object_count_wider)
-			if mcl_weather.rain.raining and mcl_weather.is_outdoor(pos) then
-				if node.name == "mcl_farming:soil" then
-					minetest.set_node(pos, {name="mcl_farming:soil_wet"})
-				end
-			end
-		end
-	})
-end
-
 if mcl_weather.reg_weathers.rain == nil then
 	mcl_weather.reg_weathers.rain = {
 		clear = mcl_weather.rain.clear,
 		light_factor = 0.6,
-		-- 10min - 20min
-		min_duration = 600,
-		max_duration = 1200,
 		transitions = {
 			[65] = "none",
 			[70] = "snow",

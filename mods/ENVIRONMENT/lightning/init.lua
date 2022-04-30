@@ -220,10 +220,6 @@ lightning.register_on_strike(function(pos, pos2, objects)
 					end
 					angle = angle + (math.pi*2) / 3
 				end
-
-			-- Cause a fire
-			else
-				set_node(pos2, { name = "mcl_fire:fire" })
 			end
 		end
 	end

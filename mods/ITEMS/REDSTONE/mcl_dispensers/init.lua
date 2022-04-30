@@ -9,26 +9,6 @@ are so many weird tables below.
 ]]
 local S = minetest.get_translator(minetest.get_current_modname())
 
--- For after_place_node
-local function setup_dispenser(pos)
-	-- Set formspec and inventory
-	local form = "size[9,8.75]"..
-	"label[0,4.0;"..minetest.formspec_escape(minetest.colorize("#313131", S("Inventory"))).."]"..
-	"list[current_player;main;0,4.5;9,3;9]"..
-	mcl_formspec.get_itemslot_bg(0,4.5,9,3)..
-	"list[current_player;main;0,7.74;9,1;]"..
-	mcl_formspec.get_itemslot_bg(0,7.74,9,1)..
-	"label[3,0;"..minetest.formspec_escape(minetest.colorize("#313131", S("Dispenser"))).."]"..
-	"list[context;main;3,0.5;3,3;]"..
-	mcl_formspec.get_itemslot_bg(3,0.5,3,3)..
-	"listring[context;main]"..
-	"listring[current_player;main]"
-	local meta = minetest.get_meta(pos)
-	meta:set_string("formspec", form)
-	local inv = meta:get_inventory()
-	inv:set_size("main", 9)
-end
-
 local function orientate_dispenser(pos, placer)
 	-- Not placed by player
 	if not placer then return end
@@ -42,11 +22,6 @@ local function orientate_dispenser(pos, placer)
 	elseif pitch < -55 then
 		minetest.swap_node(pos, {name="mcl_dispensers:dispenser_down", param2 = node.param2})
 	end
-end
-
-local on_rotate
-if minetest.get_modpath("screwdriver") then
-	on_rotate = screwdriver.rotate_simple
 end
 
 -- Shared core definition table
@@ -94,8 +69,6 @@ local dispenserdef = {
 		end
 		meta:from_table(meta2)
 	end,
-	_mcl_blast_resistance = 3.5,
-	_mcl_hardness = 3.5,
 	mesecons = {
 		effector = {
 			-- Dispense random item when triggered
@@ -276,30 +249,7 @@ local dispenserdef = {
 }
 
 -- Horizontal dispenser
-
 local horizontal_def = table.copy(dispenserdef)
-horizontal_def.description = S("Dispenser")
-horizontal_def._tt_help = S("9 inventory slots").."\n"..S("Launches item when powered by redstone power")
-horizontal_def._doc_items_longdesc = S("A dispenser is a block which acts as a redstone component which, when powered with redstone power, dispenses an item. It has a container with 9 inventory slots.")
-horizontal_def._doc_items_usagehelp = S("Place the dispenser in one of 6 possible directions. The “hole” is where items will fly out of the dispenser. Use the dispenser to access its inventory. Insert the items you wish to dispense. Supply the dispenser with redstone energy once to dispense a random item.").."\n\n"..
-
-S("The dispenser will do different things, depending on the dispensed item:").."\n\n"..
-
-S("• Arrows: Are launched").."\n"..
-S("• Eggs and snowballs: Are thrown").."\n"..
-S("• Fire charges: Are fired in a straight line").."\n"..
-S("• Armor: Will be equipped to players and armor stands").."\n"..
-S("• Boats: Are placed on water or are dropped").."\n"..
-S("• Minecart: Are placed on rails or are dropped").."\n"..
-S("• Bone meal: Is applied on the block it is facing").."\n"..
-S("• Empty buckets: Are used to collect a liquid source").."\n"..
-S("• Filled buckets: Are used to place a liquid source").."\n"..
-S("• Heads, pumpkins: Equipped to players and armor stands, or placed as a block").."\n"..
-S("• Shulker boxes: Are placed as a block").."\n"..
-S("• TNT: Is placed and ignited").."\n"..
-S("• Flint and steel: Is used to ignite a fire in air and to ignite TNT").."\n"..
-S("• Spawn eggs: Will summon the mob they contain").."\n"..
-S("• Other items: Are simply dropped")
 
 function horizontal_def.after_place_node(pos, placer, itemstack, pointed_thing)
 	setup_dispenser(pos)
@@ -312,58 +262,25 @@ horizontal_def.tiles = {
 	"default_furnace_side.png", "mcl_dispensers_dispenser_front_horizontal.png"
 }
 horizontal_def.paramtype2 = "facedir"
-horizontal_def.groups = {pickaxey=1, container=2, material_stone=1}
 
 minetest.register_node("mcl_dispensers:dispenser", horizontal_def)
 
 -- Down dispenser
 local down_def = table.copy(dispenserdef)
-down_def.description = S("Downwards-Facing Dispenser")
 down_def.after_place_node = setup_dispenser
 down_def.tiles = {
 	"default_furnace_top.png", "mcl_dispensers_dispenser_front_vertical.png",
 	"default_furnace_side.png", "default_furnace_side.png",
 	"default_furnace_side.png", "default_furnace_side.png"
 }
-down_def.groups = {pickaxey=1, container=2,not_in_creative_inventory=1, material_stone=1}
-down_def._doc_items_create_entry = false
-down_def.drop = "mcl_dispensers:dispenser"
 minetest.register_node("mcl_dispensers:dispenser_down", down_def)
 
 -- Up dispenser
 -- The up dispenser is almost identical to the down dispenser , it only differs in textures
 local up_def = table.copy(down_def)
-up_def.description = S("Upwards-Facing Dispenser")
 up_def.tiles = {
 	"mcl_dispensers_dispenser_front_vertical.png", "default_furnace_bottom.png",
 	"default_furnace_side.png", "default_furnace_side.png",
 	"default_furnace_side.png", "default_furnace_side.png"
 }
 minetest.register_node("mcl_dispensers:dispenser_up", up_def)
-
-
-minetest.register_craft({
-	output = "mcl_dispensers:dispenser",
-	recipe = {
-		{"mcl_core:cobble", "mcl_core:cobble", "mcl_core:cobble",},
-		{"mcl_core:cobble", "mcl_bows:bow", "mcl_core:cobble",},
-		{"mcl_core:cobble", "mesecons:redstone", "mcl_core:cobble",},
-	}
-})
-
--- Add entry aliases for the Help
-if minetest.get_modpath("doc") then
-	doc.add_entry_alias("nodes", "mcl_dispensers:dispenser", "nodes", "mcl_dispensers:dispenser_down")
-	doc.add_entry_alias("nodes", "mcl_dispensers:dispenser", "nodes", "mcl_dispensers:dispenser_up")
-end
-
--- Legacy
-minetest.register_lbm({
-	label = "Update dispenser formspecs (0.60.0)",
-	name = "mcl_dispensers:update_formspecs_0_60_0",
-	nodenames = { "mcl_dispensers:dispenser", "mcl_dispensers:dispenser_down", "mcl_dispensers:dispenser_up" },
-	action = function(pos, node)
-		setup_dispenser(pos)
-		minetest.log("action", "[mcl_dispenser] Node formspec updated at "..minetest.pos_to_string(pos))
-	end,
-})

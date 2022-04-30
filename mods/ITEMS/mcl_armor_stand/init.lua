@@ -22,15 +22,7 @@ end
 local function migrate_inventory(inv)
 	inv:set_size("armor", 5)
 	local lists = inv:get_lists()
-	for name, element in pairs(mcl_armor.elements) do
-		local listname = "armor_" .. name
-		local list = lists[listname]
-		if list then
-			inv:set_stack("armor", element.index, list[1])
-			inv:set_size(listname, 0)
-		end
 	end
-end
 
 -- Drop all armor on the ground when it got destroyed
 local function drop_inventory(pos)
@@ -45,10 +37,6 @@ end
 
 -- TODO: The armor stand should be an entity
 minetest.register_node("mcl_armor_stand:armor_stand", {
-	description = S("Armor Stand"),
-	_tt_help = S("Displays pieces of armor"),
-	_doc_items_longdesc = S("An armor stand is a decorative object which can display different pieces of armor. Anything which players can wear as armor can also be put on an armor stand."),
-	_doc_items_usagehelp = S("Just place an armor item on the armor stand. To take the top piece of armor from the armor stand, select your hand and use the place key on the armor stand."),
 	drawtype = "mesh",
 	mesh = "3d_armor_stand.obj",
 	inventory_image = "3d_armor_stand_item.png",
@@ -58,40 +46,10 @@ minetest.register_node("mcl_armor_stand:armor_stand", {
 	paramtype2 = "facedir",
 	walkable = false,
 	is_ground_content = false,
-	stack_max = 16,
 	selection_box = {
 		type = "fixed",
 		fixed = {-0.5,-0.5,-0.5, 0.5,1.4,0.5}
 	},
-	-- TODO: This should be breakable by 2 quick punches
-	groups = {handy=1, deco_block=1, dig_by_piston=1, attached_node=1},
-	_mcl_hardness = 2,
-	sounds = mcl_sounds.node_sound_wood_defaults(),
-	on_construct = function(pos)
-		spawn_stand_entity(pos)
-	end,
-	on_destruct = function(pos)
-		drop_inventory(pos)
-	end,
-	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-		local protname = clicker:get_player_name()
-
-		if minetest.is_protected(pos, protname) then
-			minetest.record_protection_violation(pos, protname)
-			return itemstack
-		end
-
-		return mcl_armor.equip(itemstack, get_stand_entity(pos, node).object, true)
-	end,
-	on_rotate = function(pos, node, user, mode)
-		if mode == screwdriver.ROTATE_FACE then
-			node.param2 = (node.param2 + 1) % 4
-			minetest.swap_node(pos, node)
-			get_stand_entity(pos, node):update_rotation(node)
-			return true
-		end
-		return false
-	end,
 })
 
 minetest.register_entity("mcl_armor_stand:armor_entity", {
@@ -111,7 +69,6 @@ minetest.register_entity("mcl_armor_stand:armor_entity", {
 		self.node_pos = vector.round(self.object:get_pos())
 		self.inventory = minetest.get_meta(self.node_pos):get_inventory()
 		migrate_inventory(self.inventory)
-		mcl_armor.update(self.object)
 	end,
 	on_step = function(self, dtime)
 		if minetest.get_node(self.node_pos).name ~= "mcl_armor_stand:armor_stand" then

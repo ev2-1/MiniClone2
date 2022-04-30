@@ -119,17 +119,10 @@ pumpkin_face_base_def.groups.non_combat_armor=1
 pumpkin_face_base_def.groups.armor_head=1
 pumpkin_face_base_def.groups.non_combat_armor_head=1
 pumpkin_face_base_def._mcl_armor_mob_range_factor = 0
-pumpkin_face_base_def._mcl_armor_mob_range_mob = "mobs_mc:enderman"
 
 pumpkin_face_base_def._mcl_armor_element = "head"
 pumpkin_face_base_def._mcl_armor_texture = "mcl_farming_pumpkin_face.png"
 pumpkin_face_base_def._mcl_armor_preview = "mcl_farming_pumpkin_face_preview.png"
-
-pumpkin_face_base_def.on_construct = function(pos)
-	-- Attempt to spawn iron golem or snow golem
-	mobs_mc.tools.check_iron_golem_summon(pos)
-	mobs_mc.tools.check_snow_golem_summon(pos)
-end
 
 if minetest.get_modpath("mcl_armor") then
 	local pumpkin_hud = {}
@@ -192,24 +185,12 @@ minetest.register_node("mcl_farming:pumpkin_face", pumpkin_face_base_def)
 
 -- Jack o'Lantern
 minetest.register_node("mcl_farming:pumpkin_face_light", {
-	description = S("Jack o'Lantern"),
-	_doc_items_longdesc = S("A jack o'lantern is a traditional Halloween decoration made from a pumpkin. It glows brightly."),
 	is_ground_content = false,
 	stack_max = 64,
 	paramtype = "light",
 	paramtype2 = "facedir",
 	light_source = minetest.LIGHT_MAX,
 	tiles = {"farming_pumpkin_top.png", "farming_pumpkin_top.png", "farming_pumpkin_side.png", "farming_pumpkin_side.png", "farming_pumpkin_side.png", "farming_pumpkin_face_light.png"},
-	groups = {handy=1,axey=1, building_block=1, dig_by_piston=1 },
-	sounds = mcl_sounds.node_sound_wood_defaults(),
-	on_construct = function(pos)
-		-- Attempt to spawn iron golem or snow golem
-		mobs_mc.tools.check_iron_golem_summon(pos)
-		mobs_mc.tools.check_snow_golem_summon(pos)
-	end,
-	on_rotate = on_rotate,
-	_mcl_blast_resistance = 1,
-	_mcl_hardness = 1,
 })
 
 -- Crafting
