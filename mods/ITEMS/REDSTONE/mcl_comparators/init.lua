@@ -66,7 +66,6 @@ for _, mode in pairs{"comp", "sub"} do
 				type = "fixed",
 				fixed = node_boxes[mode],
 			},
-			groups = groups,
 			paramtype = "light",
 			paramtype2 = "facedir",
 			sunlight_propagates = false,

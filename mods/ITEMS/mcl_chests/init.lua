@@ -68,7 +68,6 @@ local function register_chest(basename, tiles_table)
 	local left_textures = tiles_table.double
 
 	minetest.register_node("mcl_chests:"..basename, {
-		description = desc,
 		drawtype = "mesh",
 		mesh = "mcl_chests_chest.obj",
 		tiles = small_textures,
@@ -98,7 +97,6 @@ local function register_chest(basename, tiles_table)
 		tiles = {"mcl_chests_blank.png"},
 		paramtype = "light",
 		paramtype2 = "facedir",
-		drop = drop,
 		is_ground_content = false,
 	})
 
@@ -245,11 +243,6 @@ for color, desc in pairs(boxtypes) do
 	local mob_texture = shulker_mob_textures[color]
 	local is_canonical = color == canonical_shulker_color
 	local longdesc, usagehelp, create_entry, entry_name
-	if mod_doc then
-		if not is_canonical then
-			create_entry = false
-		end
-	end
 
 	local small_name = "mcl_chests:"..color.."_shulker_box_small"
 

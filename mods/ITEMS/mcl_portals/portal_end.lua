@@ -34,7 +34,6 @@ minetest.register_node("mcl_portals:portal_end", {
 	-- This is 15 in MC.
 	light_source = 14,
 	post_effect_color = {a = 192, r = 0, g = 0, b = 0},
-	after_destruct = destroy_portal,
 	-- This prevents “falling through”
 	collision_box = {
 		type = "fixed",

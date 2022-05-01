@@ -74,7 +74,6 @@ minetest.register_node("mcl_droppers:dropper", horizontal_def)
 
 -- Down dropper
 local down_def = table.copy(dropperdef)
-down_def.after_place_node = setup_dropper
 down_def.tiles = {
 	"default_furnace_top.png", "mcl_droppers_dropper_front_vertical.png",
 	"default_furnace_side.png", "default_furnace_side.png",
@@ -95,14 +94,4 @@ up_def.tiles = {
 }
 minetest.register_node("mcl_droppers:dropper_up", up_def)
 
-
-
--- Ladies and gentlemen, I present to you: the crafting recipe!
-minetest.register_craft({
-	output = "mcl_droppers:dropper",
-	recipe = {
-		{"mcl_core:cobble", "mcl_core:cobble", "mcl_core:cobble",},
-		{"mcl_core:cobble", "", "mcl_core:cobble",},
-		{"mcl_core:cobble", "mesecons:redstone", "mcl_core:cobble",},
-	}
-})
+-- Ladies and gentlemen, I present to you: ~~the crafting recipe~~ nothig!

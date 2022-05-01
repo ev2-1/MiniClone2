@@ -61,7 +61,6 @@ for i = 1, 4 do
 			type = "fixed",
 			fixed = boxes
 		},
-		groups = groups,
 		paramtype = "light",
 		paramtype2 = "facedir",
 		sunlight_propagates = false,

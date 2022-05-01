@@ -5,6 +5,8 @@ local F = minetest.formspec_escape
 
 local table = table
 
+
+signs = {}
 -- Load the characters map (characters.txt)
 --[[ File format of characters.txt:
 It's an UTF-8 encoded text file that contains metadata for all supported characters. It contains a sequence of info blocks, one for each character. Each info block is made out of 3 lines:
@@ -208,7 +210,7 @@ local function destruct_sign(pos)
 	end
 end
 
-local function update_sign(pos, fields, sender, force_remove)
+function update_sign(pos, fields, sender, force_remove)
 	local meta = minetest.get_meta(pos)
 	if not meta then
 		return
@@ -230,10 +232,10 @@ local function update_sign(pos, fields, sender, force_remove)
 	elseif nn == "mcl_signs:wall_sign" then
 		sign_info = signtext_info_wall[get_wall_signtext_info(n.param2)]
 	end
-	if sign_info == nil then
-		minetest.log("error", "[mcl_signs] Missing sign_info!")
-		return
-	end
+--	if sign_info == nil then
+--		minetest.log("error", "[mcl_signs] Missing sign_info!")
+--		return
+--	end
 
 	local objects = minetest.get_objects_inside_radius(pos, 0.5)
 	local text_entity
@@ -261,6 +263,8 @@ local function update_sign(pos, fields, sender, force_remove)
 	text_entity:set_yaw(sign_info.yaw)
 end
 
+signs.update = update_sign
+
 local function show_formspec(player, pos)
 	minetest.show_formspec(
 		player:get_player_name(),
@@ -284,10 +288,6 @@ if minetest.get_modpath("mcl_sounds") then
 end
 
 minetest.register_node("mcl_signs:wall_sign", {
-	description = S("Sign"),
-	_tt_help = S("Can be written"),
-	_doc_items_longdesc = S("Signs can be written and come in two variants: Wall sign and sign on a sign post. Signs can be placed on the top and the sides of other blocks, but not below them."),
-	_doc_items_usagehelp = S("After placing the sign, you can write something on it. You have 4 lines of text with up to 15 characters for each line; anything beyond these limits is lost. Not all characters are supported. The text can not be changed once it has been written; you have to break and place the sign again."),
 	inventory_image = "default_sign.png",
 	walkable = false,
 	is_ground_content = false,
@@ -405,9 +405,6 @@ minetest.register_node("mcl_signs:wall_sign", {
 		return itemstack
 	end,
 	on_destruct = destruct_sign,
-	on_punch = function(pos, node, puncher)
-		update_sign(pos)
-	end,
 	on_rotate = function(pos, node, user, mode)
 		if mode == screwdriver.ROTATE_FACE then
 			local r = screwdriver.rotate.wallmounted(pos, node, mode)
@@ -541,30 +538,6 @@ minetest.register_entity("mcl_signs:text", {
 		return minetest.serialize(out)
 	end,
 })
-
-minetest.register_craft({
-	type = "fuel",
-	recipe = "mcl_signs:wall_sign",
-	burntime = 10,
-})
-
-if minetest.get_modpath("mcl_core") then
-	minetest.register_craft({
-		output = "mcl_signs:wall_sign 3",
-		recipe = {
-			{"group:wood", "group:wood", "group:wood"},
-			{"group:wood", "group:wood", "group:wood"},
-			{"", "mcl_core:stick", ""},
-		}
-	})
-end
-
-if minetest.get_modpath("doc") then
-	doc.add_entry_alias("nodes", "mcl_signs:wall_sign", "nodes", "mcl_signs:standing_sign")
-	doc.add_entry_alias("nodes", "mcl_signs:wall_sign", "nodes", "mcl_signs:standing_sign22_5")
-	doc.add_entry_alias("nodes", "mcl_signs:wall_sign", "nodes", "mcl_signs:standing_sign45")
-	doc.add_entry_alias("nodes", "mcl_signs:wall_sign", "nodes", "mcl_signs:standing_sign67_5")
-end
 
 minetest.register_alias("signs:sign_wall", "mcl_signs:wall_sign")
 minetest.register_alias("signs:sign_yard", "mcl_signs:standing_sign")

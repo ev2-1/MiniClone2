@@ -69,18 +69,6 @@ local function register_wires()
 			nodebox.fixed = {-8/16, -.5, -1/16, 8/16, -.5+1/16, 1/16}
 		end
 
-		local meseconspec_off = { conductor = {
-			rules = wire_rules,
-			state = "on",
-			onstate = "mesecons:wire_"..nodeid.."_on"
-		}}
-
-		local meseconspec_on = { conductor = {
-			rules = wire_rules,
-			state = "on",
-			offstate = "mesecons:wire_"..nodeid.."_off"
-		}}
-
 		-- Wire textures
 		local ratio_off = 128
 		local ratio_on = 192
@@ -120,16 +108,6 @@ local function register_wires()
 			walkable = false,
 			drop = "mesecons:wire_00000000_off",
 			is_ground_content = false,
-			mesecon_wire = true
-		},{
-			description = desc_off,
-			inventory_image = img,
-			wield_image = img,
-			tiles = tiles_off,
-			mesecons = meseconspec_off,
-		},{
-			tiles = tiles_on,
-			mesecons = meseconspec_on,
 		})
 
 		-- Add Help entry aliases for e.g. making it identifiable by the lookup tool [doc_identifier]

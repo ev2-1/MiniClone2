@@ -17,7 +17,6 @@ minetest.register_node("mcl_dispensers:dispenser", horizontal_def)
 
 -- Down dispenser
 local down_def = table.copy(dispenserdef)
-down_def.after_place_node = setup_dispenser
 down_def.tiles = {
 	"default_furnace_top.png", "mcl_dispensers_dispenser_front_vertical.png",
 	"default_furnace_side.png", "default_furnace_side.png",

@@ -142,40 +142,6 @@ minetest.register_node("mcl_enchanting:table", {
 		fixed = {-0.5, -0.5, -0.5, 0.5, 0.25, 0.5},
 	},
 	groups = {pickaxey = 2, deco_block = 1},
-	on_rotate = rotate,
-	on_construct = function(pos)
-		spawn_book_entity(pos)
-	end,
-	after_dig_node = function(pos, oldnode, oldmetadata, digger)
-		local dname = (digger and digger:get_player_name()) or ""
-		if minetest.is_creative_enabled(dname) then
-			return
-		end
-		local itemstack = ItemStack("mcl_enchanting:table")
-		local meta = minetest.get_meta(pos)
-		local itemmeta = itemstack:get_meta()
-		itemmeta:set_string("name", meta:get_string("name"))
-		itemmeta:set_string("description", meta:get_string("description"))
-		minetest.add_item(pos, itemstack)
-	end,
-	after_place_node = function(pos, placer, itemstack, pointed_thing)
-		local meta = minetest.get_meta(pos)
-		local itemmeta = itemstack:get_meta()
-		meta:set_string("name", itemmeta:get_string("name"))
-		meta:set_string("description", itemmeta:get_string("description"))
-	end,
-	after_destruct = function(pos)
-		local objs = minetest.get_objects_inside_radius(pos, 1)
-		for o=1, #objs do
-			local obj = objs[o]
-			local lua = obj:get_luaentity()
-			if lua and lua.name == "mcl_enchanting:book" then
-				if lua._table_pos and vector.equals(pos, lua._table_pos) then
-					obj:remove()
-				end
-			end
-		end
-	end,
 	drop = "",
 	_mcl_blast_resistance = 1200,
 	_mcl_hardness = 5,

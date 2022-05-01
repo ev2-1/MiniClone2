@@ -55,7 +55,6 @@ function mcl_doors:register_trapdoor(name, def)
 		climbable = true,
 		sunlight_propagates = true,
 		pointable = true,
-		groups = groups_open,
 		sounds = def.sounds,
 		drop = name,
 		node_box = {

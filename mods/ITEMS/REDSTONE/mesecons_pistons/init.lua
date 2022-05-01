@@ -33,8 +33,6 @@ minetest.register_node("mesecons_pistons:piston_normal_off", {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	is_ground_content = false,
-	after_place_node = piston_orientate,
-	mesecons_piston = pistonspec_normal,
 })
 
 -- onstate
@@ -77,7 +75,6 @@ minetest.register_node("mesecons_pistons:piston_pusher_normal", {
 local pistonspec_sticky = {
 	offname = "mesecons_pistons:piston_sticky_off",
 	onname = "mesecons_pistons:piston_sticky_on",
-	dir = piston_facedir_direction,
 	pusher = "mesecons_pistons:piston_pusher_sticky",
 	sticky = true,
 	piston_down = "mesecons_pistons:piston_down_sticky_off",
@@ -240,7 +237,6 @@ minetest.register_node("mesecons_pistons:piston_up_sticky_on", {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	is_ground_content = false,
-	after_destruct = piston_remove_pusher,
 	node_box = piston_up_on_box,
 	selection_box = piston_up_on_box,
 })
@@ -335,7 +331,6 @@ minetest.register_node("mesecons_pistons:piston_down_pusher_normal", {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	is_ground_content = false,
-	after_destruct = piston_remove_base,
 	diggable = false,
 	selection_box = piston_down_pusher_box,
 	node_box = piston_down_pusher_box,
