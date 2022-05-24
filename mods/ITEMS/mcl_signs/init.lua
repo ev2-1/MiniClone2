@@ -255,10 +255,8 @@ function update_sign(pos, fields, sender, force_remove)
 		text_entity = minetest.add_entity({
 			x = pos.x + sign_info.delta.x,
 			y = pos.y + sign_info.delta.y,
-			z = pos.z + sign_info.delta.z}, "mcl_signs:text")
+			z = pos.z + sign_info.delta.z}, "mcl_signs:text", nn)
 	end
-	text_entity:get_luaentity()._signnodename = nn
-	text_entity:set_properties({textures={generate_texture(create_lines(text), nn)}})
 
 	text_entity:set_yaw(sign_info.yaw)
 end
@@ -395,9 +393,8 @@ minetest.register_node("mcl_signs:wall_sign", {
 		local text_entity = minetest.add_entity({
 			x = place_pos.x + sign_info.delta.x,
 			y = place_pos.y + sign_info.delta.y,
-			z = place_pos.z + sign_info.delta.z}, "mcl_signs:text")
+			z = place_pos.z + sign_info.delta.z}, "mcl_signs:text", nodeitem:get_name())
 		text_entity:set_yaw(sign_info.yaw)
-		text_entity:get_luaentity()._signnodename = nodeitem:get_name()
 
 		minetest.sound_play({name="default_place_node_hard", gain=1.0}, {pos = place_pos}, true)
 
@@ -520,22 +517,17 @@ minetest.register_entity("mcl_signs:text", {
 	_signnodename = nil, -- node name of sign node to which the text belongs
 
 	on_activate = function(self, staticdata)
-		if staticdata and staticdata ~= "" then
-			local des = minetest.deserialize(staticdata)
-			if des then
-				self._signnodename = des._signnodename
-			end
-		end
+		self._signnodename = staticdata
 		local meta = minetest.get_meta(self.object:get_pos())
 		local text = meta:get_string("text")
 		self.object:set_properties({
 			textures={generate_texture(create_lines(text), self._signnodename)},
+			infotext = self._signnodename,
 		})
 		self.object:set_armor_groups({ immortal = 1 })
 	end,
 	get_staticdata = function(self)
-		local out = { _signnodename = self._signnodename }
-		return minetest.serialize(out)
+		return self._signnodename
 	end,
 })
 
